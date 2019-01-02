@@ -4,6 +4,16 @@ using namespace std;
 typedef vector<int> vi;
 typedef vector<vi> mat;
 
+void show(vi const& v) {
+  for (size_t i = 0; i < v.size() - 1; i++) cout << v[i] << ' ';
+  cout << v[v.size() - 1] << '\n';
+}
+void show(mat const& v) {
+  cout << '\n';
+  for (size_t i = 0; i < v.size(); i++) show(v[i]);
+  cout << '\n';
+}
+
 void final(int const& g, int & sol, int solparcial, int j, vi & gigasxtema, mat const& gigas) {
   if(j==gigas[gigasxtema.size()].size()) {
     if(solparcial < sol) {
@@ -24,18 +34,20 @@ void final(int const& g, int & sol, int solparcial, int j, vi & gigasxtema, mat 
   }
 }
 
-void rec(int const& g, int & sol, int solparcial, int i, int j, vi & gigasxtema, mat const& gigas) {
+void rec(int const& g, int & sol, int & solparcial, int i, vi & gigasxtema, mat const& gigas) {
   if(i==gigasxtema.size()) {
     final(g,sol,solparcial,0,gigasxtema,gigas);
   }
-  else if (j==gigas[i].size()) {
-    rec(g,sol,solparcial,i+1,0,gigasxtema,gigas);
-  }
   else {
-    rec(g,sol,solparcial,i,j+1,gigasxtema,gigas);
-    gigasxtema[i] += gigas[i][j];
-    rec(g,sol,solparcial+1,i,j+1,gigasxtema,gigas);
-    gigasxtema[i] -= gigas[i][j];
+    int acc = 0; int accsol = 0;
+    rec(g,sol,solparcial,i+1,gigasxtema,gigas);
+    for (size_t j = 0; j < gigas[i].size(); j++) {
+      gigasxtema[i] += gigas[i][j]; acc += gigas[i][j];
+      solparcial++; accsol++;
+      rec(g,sol,solparcial,i+1,gigasxtema,gigas);
+    }
+    gigasxtema[i] -= acc;
+    solparcial -= accsol;
   }
 }
 
@@ -46,13 +58,16 @@ bool func() {
 
   mat gigas(t+1,vi(m));
 
-  for (int i = 0; i < t+1; i++)
+  for (int i = 0; i < t+1; i++) {
   for (int j = 0; j < m; j++)
     cin >> gigas[i][j];
+  sort(gigas[i].rbegin(), gigas[i].rend());
+  }
 
   int sol = INT_MAX;
+  int solparcial = 0;
   vi gigasxtema(t);
-  rec(g,sol,0,0,0,gigasxtema,gigas);
+  rec(g,sol,solparcial,0,gigasxtema,gigas);
   cout << sol << '\n';
   return true;
 }
