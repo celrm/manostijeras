@@ -23,10 +23,67 @@
 \usepackage[table]{xcolor}
 \usepackage{tabularx}
 
+% Gráficas
+\usepackage{pgfplots}\pgfplotsset{width=10cm,compat=1.9}
+\usepackage{tikz}
+
+\definecolor{bblue}{HTML}{4F81BD}
+\definecolor{rred}{HTML}{C0504D}
+\definecolor{ggreen}{HTML}{9BBB59}
+\definecolor{ppurple}{HTML}{9F4C7C}
+\definecolor{oorange}{HTML}{ffa742}
+
+\pgfplotstableread[row sep=\\,col sep=&]{
+	i & a & b & c & d & e \\
+	0 & 0.001139 & 0.020121 & 1181.276508 & 1115.509206 & 1045.508785 \\
+	1 & 0.001429 & 0.017187 & 24.895432 & 46.477728 & 578.037518 \\
+	2 & 0.000318 & 0.005722 & 20.550258 & 36.549864 & 192.914717 \\
+	3 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
+	4 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
+}\mydata
+
+
+\pgfplotstableread[row sep=\\,col sep=&]{
+	i & a & b & c & d & e \\
+	1 & 0.001429 & 0.017187 & 24.895432 & 46.477728 & 578.037518 \\
+	2 & 0.000318 & 0.005722 & 20.550258 & 36.549864 & 192.914717 \\
+	3 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
+	4 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
+}\mydat
+
+\newenvironment{mygraph}{%
+	\begingroup
+	\noindent\begin{tikzpicture}
+	\begin{axis}[
+	width  = \textwidth,
+	height = 8cm,
+	major x tick style = transparent,
+	ybar=2*\pgflinewidth,
+%	bar width=14pt,
+%	ymajorgrids = true,
+	ylabel = {Tiempo (ms)},
+	xlabel = {Número de algoritmo},
+	symbolic x coords={0,1,2,3,4},
+	xtick = data,
+	scaled y ticks = false,
+	enlarge x limits=0.15,
+	ymin=0,
+	legend cell align=left,
+	legend style={
+		at={(0.6,1.05)},
+		anchor=south east,
+		column sep=1ex
+	}
+	]
+}{
+	\end{axis}
+	\end{tikzpicture}
+	\endgroup
+}
+
 % Otros
 \usepackage{graphicx}
 \usepackage{chemfig}
-\usepackage{tikz}
 \usepackage{listings}
 
 \usepackage{hyperref}
@@ -48,7 +105,6 @@
 
 \begin{document}
 	\maketitle
-	
 	Al final no voy a llegar al máximo de gigavatios en cada tema de EDA. ¡No seré un McFly experto! Si lo hubiera sabido, habría hecho más misiones de los temas en los que me faltan y menos en los que me sobran. Claro, que también podría viajar al pasado y avisar a mi yo de septiembre de las misiones mínimas que tengo que hacer para conseguir el 10.
 	
 %	Hay misiones como \texttt{Pardillo} (el primer Kahoot), \texttt{La hora de la verdad} (el examencillo), \texttt{Condensador de fluzo} (la infografía), \texttt{Preguntón} (las preguntas de Kahoot propias), \texttt{Explica como puedas} (el vídeo), \texttt{Al juzgado} (el problema del juez), \texttt{Ponte en mi lugar} (el problema del juez propio)...	
@@ -61,7 +117,7 @@
 	
 	\subsubsection*{Entrada}
 	
-	La entrada estará compuesta por distintos casos de prueba. En la primera línea aparecen tres números: el número de gigavatios que necesito alcanzar en cada tema ($0<\text{G}\leq 10^9$), el número $\text{T}\in\mathbb{N}$ de temas en el cuatrimestre y el número $\text{M}\in\mathbb{N}$ de misiones por cada tema ($\text{T}*\text{M}<30$).
+	La entrada estará compuesta por distintos casos de prueba. En la primera línea aparecen tres números: el número de gigavatios que necesito alcanzar en cada tema ($0<\text{G}\leq 10^9$), el número $\text{T}\in\mathbb{N}$ de temas en el cuatrimestre y el número $\text{M}\in\mathbb{N}$ de misiones por cada tema ($\text{T}*\text{M}\leq20$).
 	
 	Por cada línea de las T siguientes líneas se encuentran M enteros, que corresponden a los gigavatios asignados a cada misión de dicho tema. Una misión puede no estar asignada en algún tema, en cuyo caso se me concedería cero gigavatios por hacerla. Además ninguna misión resta gigavatios, ¡encima de hacer el esfuerzo!
 	
@@ -93,6 +149,12 @@
 		4 14 2 0 4\\
 		4 8 2 0 6\\
 		5 0 0 0 0\\
+		4 4 5\\
+		1 1 1 1 1\\
+		1 1 1 1 1\\
+		1 1 1 1 1\\
+		1 1 1 1 1\\
+		3 2 1 1 0\\
 %		20 6 7\\
 %		0 9 2 2 5 3 0\\
 %		4 8 2 2 0 4 0\\
@@ -101,14 +163,14 @@
 %		4 8 2 0 10 6 3\\
 %		4 8 2 0 0 6 3\\
 %		0 0 0 0 0 0 0\\
-		20 6 5\\
-		0 9 2 2 3\\
-		4 8 2 2 4\\
-		4 8 2 0 6\\
-		4 14 2 0 4\\
-		4 8 2 0 6\\
-		4 8 2 0 6\\
-		5 0 0 0 0\\
+%		20 6 5\\
+%		0 9 2 2 3\\
+%		4 8 2 2 4\\
+%		4 8 2 0 6\\
+%		4 14 2 0 4\\
+%		4 8 2 0 6\\
+%		4 8 2 0 6\\
+%		5 0 0 0 0\\
 		0 0 0\\
 	\end{caja}\\
 	
@@ -118,17 +180,18 @@
 		5\\
 		16\\
 		15\\
-		25\\
+		13\\
+%		25\\
 	\end{caja}\\
 
 	\newpage
 	
 	\subsubsection*{Solución de búsqueda exhaustiva}
-	En \href{run:manostijeras.cpp}{manostijeras.cpp} se resuelve el problema guardando en \texttt{gigasxtema} los gigavatios acumulados por cada tema. Se ordenan decrecientemente las filas de la matriz, y se recorre:
-	\begin{itemize}
-		\item Por cada tema (\texttt{i}), se llama a la función \texttt{rec} de manera acumulativa con las misiones: ninguna, la primera, la primera y la segunda... (tras haberlas incluido en \texttt{gigasxtema} y haber incrementado \texttt{solparcial}).
-		\item Si hemos acabado la matriz de misiones estándar, quedan por añadir las posibles \textit{misiones a la carta}. Entonces se llama a \texttt{final}.
-	\end{itemize}
+	En \href{run:manostijeras.cpp}{manostijeras.cpp} se guardan en \texttt{gigasxtema} los gigavatios acumulados por cada tema. Se ordenan decrecientemente las filas de la matriz.
+	
+	Por cada tema (\texttt{i}), se llama a la función \texttt{rec} de manera acumulativa con las misiones: ninguna, la primera, la primera y la segunda... (tras haberlas incluido en \texttt{gigasxtema} y haber incrementado \texttt{solparcial}).
+	
+	Si hemos acabado la matriz de misiones estándar, quedan por añadir las posibles \textit{misiones a la carta}. Entonces se llama a \texttt{final}.
 
 	En \texttt{final} probamos todas las opciones añadiendo o no añadiendo cada \textit{misión a la carta} a cada uno de los temas mediante el bucle.
 	
@@ -144,6 +207,74 @@
 	En \href{run:manostijeras3.cpp}{manostijeras3.cpp} se podan (además de los anteriores) todos los nodos en los que la solución parcial (número de misiones) no sea inferior a la solución total, ya que a partir de ese punto solo se van a añadir más misiones y ya tenemos una solución igual o mejor. Se podan tanto las misiones estándar como las \textit{a la carta}.\\
 	
 	\subsubsection*{Poda 4: Podar los peores que la forma polinómica}
-	En \href{run:manostijeras4.cpp}{manostijeras4.cpp} acotamos mejor la solución total: nos damos cuenta de que hay una manera de resolverlo de manera polinómica si no existieran las \textit{misiones a la carta}, por lo que, si hay solución polinómica, nuestra solución mínima será menor o igual a ésta. Por tanto, se inicializa \texttt{sol} a este resultado y, en su defecto, al límite superior de los enteros (lo que había antes).
+	En \href{run:manostijeras4.cpp}{manostijeras4.cpp} acotamos mejor la solución total: nos damos cuenta de que hay una manera de resolverlo de manera polinómica si no existieran las \textit{misiones a la carta}, por lo que, si hay solución polinómica, nuestra solución mínima será menor o igual a ésta. Por tanto, se inicializa \texttt{sol} a este resultado y, en su defecto, al límite superior de los enteros (lo que había antes).\\	
+	
+	\subsubsection*{Tiempos}
+	Se han medido los tiempos que tarda cada algoritmo en resolver cada caso de prueba del ejemplo. Para mayor precisión, se ha hecho la medida 100 veces y se ha hecho la media.
+
+\begin{mygraph}
+	\addplot table[x=i,y=a]{\mydata};
+	\addplot table[x=i,y=b]{\mydata};
+	\addplot table[x=i,y=c]{\mydata};
+	\addplot table[x=i,y=d]{\mydata};
+	\addplot table[x=i,y=e]{\mydata};
+	\legend{
+		Caso 1 1 1,
+		Caso 4 2 2,
+		Caso 20 4 5 (1),
+		Caso 20 4 5 (2),
+		Caso 4 4 5
+	}
+\end{mygraph}
+
+Como conclusión, la primera poda reduce significativamente el tiempo de los casos que tienen más ceros (por ello, el último caso no se reduce tanto). La segunda poda es la que parece mejor, ya que no hay casos que dependan tanto del número de soluciones posibles (que es el objetivo de las podas 3 y 4), y estas dos últimas podas compensan lo que se ahorra con lo que se gasta. En general, no hay gran diferencia entre las tres últimas podas.
+
+Cuanto más grande es el caso, más se nota la mejora de la poda. En los casos pequeños apenas se nota, mientras que en los casos más grandes es casi imposible ejecutar los primeros algoritmos.
+
+Código cronómetro: \href{run:Tiempos/tiempos.cpp}{tiempos.cpp}
+
+Código de los algoritmos: \href{run:Tiempos/algoritmos.cpp}{algoritmos.cpp}, \href{run:Tiempos/algoritmos.h}{algoritmos.h}
+
+Texto de entrada: \href{run:Tiempos/entrada.txt}{salida.txt}
+
+Textos de salida: \href{run:Tiempos/salida.txt}{salida.txt}, \href{run:Tiempos/salida1.txt}{salida1.txt}, \href{run:Tiempos/salida2.txt}{salida2.txt}, \href{run:Tiempos/salida3.txt}{salida3.txt}, \href{run:Tiempos/salida4.txt}{salida4.txt}.
+
+
+\begin{mygraph}
+\addplot table[x=i,y=a]{\mydata};
+\legend{Caso 1 1 1}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=b]{\mydata};
+\legend{Caso 4 2 2}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=c]{\mydata};
+\legend{Caso 20 4 5 (1)}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=c]{\mydat};
+\legend{Solo poda}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=d]{\mydata};
+\legend{Caso 20 4 5 (2)}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=d]{\mydat};
+\legend{Solo poda}
+\end{mygraph}
+
+\begin{mygraph}
+\addplot table[x=i,y=e]{\mydata};
+\legend{Caso 4 4 5}
+\end{mygraph}
+	
+	
 	    
 \end{document}

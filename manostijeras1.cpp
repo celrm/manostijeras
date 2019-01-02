@@ -60,7 +60,7 @@ bool func() {
 
   int sol = INT_MAX;
   int solparcial = 0;
-  vi gigasxtema(t);
+  vi gigasxtema(t,0);
   rec(g,sol,solparcial,0,gigasxtema,gigas);
   cout << sol << '\n';
   return true;
