@@ -23,9 +23,14 @@
 \usepackage[table]{xcolor}
 \usepackage{tabularx}
 
+\usepackage{wrapfig}
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist 
+
 % Gráficas
 \usepackage{pgfplots}\pgfplotsset{width=10cm,compat=1.9}
 \usepackage{tikz}
+\usepackage{pgfplotstable}
 
 \definecolor{bblue}{HTML}{4F81BD}
 \definecolor{rred}{HTML}{C0504D}
@@ -34,7 +39,7 @@
 \definecolor{oorange}{HTML}{ffa742}
 
 \pgfplotstableread[row sep=\\,col sep=&]{
-	i & a & b & c & d & e \\
+	Algoritmo & C. 1 1 1 & C. 4 2 2 & C. 20 4 5 (1) & C. 20 4 5 (2) & C. 4 4 5 \\
 	0 & 0.001139 & 0.020121 & 1181.276508 & 1115.509206 & 1045.508785 \\
 	1 & 0.001429 & 0.017187 & 24.895432 & 46.477728 & 578.037518 \\
 	2 & 0.000318 & 0.005722 & 20.550258 & 36.549864 & 192.914717 \\
@@ -44,14 +49,14 @@
 
 
 \pgfplotstableread[row sep=\\,col sep=&]{
-	i & a & b & c & d & e \\
+	Algoritmo & C. 1 1 1 & C. 4 2 2 & C. 20 4 5 (1) & C. 20 4 5 (2) & C. 4 4 5 \\
 	1 & 0.001429 & 0.017187 & 24.895432 & 46.477728 & 578.037518 \\
 	2 & 0.000318 & 0.005722 & 20.550258 & 36.549864 & 192.914717 \\
 	3 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
 	4 & 0.000651 & 0.012349 & 21.199416 & 36.499793 & 182.526029 \\
 }\mydat
 
-\newenvironment{mygraph}{%
+\newenvironment{mygraph}[1][0.6]{%
 	\begingroup
 	\noindent\begin{tikzpicture}
 	\begin{axis}[
@@ -70,7 +75,7 @@
 	ymin=0,
 	legend cell align=left,
 	legend style={
-		at={(0.6,1.05)},
+		at={({#1},1.05)},
 		anchor=south east,
 		column sep=1ex
 	}
@@ -186,7 +191,12 @@
 
 	\newpage
 	
+	\tableofcontents
+	
+	\newpage
+	
 	\subsubsection*{Solución de búsqueda exhaustiva}
+	\addcontentsline{toc}{section}{Solución de búsqueda exhaustiva}
 	En \href{run:manostijeras.cpp}{manostijeras.cpp} se guardan en \texttt{gigasxtema} los gigavatios acumulados por cada tema. Se ordenan decrecientemente las filas de la matriz.
 	
 	Por cada tema (\texttt{i}), se llama a la función \texttt{rec} de manera acumulativa con las misiones: ninguna, la primera, la primera y la segunda... (tras haberlas incluido en \texttt{gigasxtema} y haber incrementado \texttt{solparcial}).
@@ -198,38 +208,52 @@
 	Si hemos acabado con todas las misiones, se comprueba si el estado actual es solución (si la solución parcial es menor que la total y si en todos los temas se ha llegado al máximo \texttt{g}).\\
 	
 	\subsubsection*{Poda 1: Podar los ceros}
+	\addcontentsline{toc}{section}{Poda 1: Podar los ceros}
 	En \href{run:manostijeras1.cpp}{manostijeras1.cpp} se podan todos los nodos no positivos, ya que solo añaden volumen de misiones sin aportar gigavatios. Se podan tanto las misiones estándar como las \textit{a la carta}.\\
 	
 	\subsubsection*{Poda 2: Podar los que se pasan de gigavatios}
+	\addcontentsline{toc}{section}{Poda 2: Podar los que se pasan de gigavatios}
 	En \href{run:manostijeras2.cpp}{manostijeras2.cpp} se podan (además de los anteriores) todos los nodos que sobrepasen el número de gigavatios requerido \texttt{g}, ya que una vez se pasa de \texttt{g} en un tema no hacen falta más misiones. Se podan tanto las misiones estándar como las \textit{a la carta}.\\
 	
 	\subsubsection*{Poda 3: Podar los peores que lo que ya tenemos}
+	\addcontentsline{toc}{section}{Poda 3: Podar los peores que lo que ya tenemos}
 	En \href{run:manostijeras3.cpp}{manostijeras3.cpp} se podan (además de los anteriores) todos los nodos en los que la solución parcial (número de misiones) no sea inferior a la solución total, ya que a partir de ese punto solo se van a añadir más misiones y ya tenemos una solución igual o mejor. Se podan tanto las misiones estándar como las \textit{a la carta}.\\
 	
 	\subsubsection*{Poda 4: Podar los peores que la forma polinómica}
+	\addcontentsline{toc}{section}{Poda 4: Podar los peores que la forma polinómica}
 	En \href{run:manostijeras4.cpp}{manostijeras4.cpp} acotamos mejor la solución total: nos damos cuenta de que hay una manera de resolverlo de manera polinómica si no existieran las \textit{misiones a la carta}, por lo que, si hay solución polinómica, nuestra solución mínima será menor o igual a ésta. Por tanto, se inicializa \texttt{sol} a este resultado y, en su defecto, al límite superior de los enteros (lo que había antes).\\	
 	
 	\subsubsection*{Tiempos}
-	Se han medido los tiempos que tarda cada algoritmo en resolver cada caso de prueba del ejemplo. Para mayor precisión, se ha hecho la medida 100 veces y se ha hecho la media.
-
-\begin{mygraph}
-	\addplot table[x=i,y=a]{\mydata};
-	\addplot table[x=i,y=b]{\mydata};
-	\addplot table[x=i,y=c]{\mydata};
-	\addplot table[x=i,y=d]{\mydata};
-	\addplot table[x=i,y=e]{\mydata};
-	\legend{
-		Caso 1 1 1,
-		Caso 4 2 2,
-		Caso 20 4 5 (1),
-		Caso 20 4 5 (2),
-		Caso 4 4 5
-	}
-\end{mygraph}
+	\addcontentsline{toc}{section}{Tiempos}	
+	\vspace*{-0.75cm}	
+	\begin{tikzpicture}[overlay]
+	\draw (5.5, -5) node {
+		\begin{mygraph}[1]
+		\addplot table[x=Algoritmo,y=C. 1 1 1]{\mydata};
+		\addplot table[x=Algoritmo,y=C. 4 2 2]{\mydata};
+		\addplot table[x=Algoritmo,y=C. 20 4 5 (1)]{\mydata};
+		\addplot table[x=Algoritmo,y=C. 20 4 5 (2)]{\mydata};
+		\addplot table[x=Algoritmo,y=C. 4 4 5]{\mydata};
+		\legend{
+			Caso 1 1 1,
+			Caso 4 2 2,
+			Caso 20 4 5 (1),
+			Caso 20 4 5 (2),
+			Caso 4 4 5
+		}
+		\end{mygraph}
+	};
+	\end{tikzpicture}
+	
+	\addcontentsline{toc}{subsection}{Gráfica general}
+	\begin{changemargin}{0cm}{4cm} 
+		\qquad Se han medido los tiempos que tarda cada algoritmo en resolver cada caso de prueba del ejemplo. Para mayor precisión, se ha hecho la medida 100 veces y se ha hecho la media.
+	\end{changemargin}
+\vspace*{8cm}
 
 Como conclusión, la primera poda reduce significativamente el tiempo de los casos que tienen más ceros (por ello, el último caso no se reduce tanto). La segunda poda es la que parece mejor, ya que no hay casos que dependan tanto del número de soluciones posibles (que es el objetivo de las podas 3 y 4), y estas dos últimas podas compensan lo que se ahorra con lo que se gasta. En general, no hay gran diferencia entre las tres últimas podas.
 
-Cuanto más grande es el caso, más se nota la mejora de la poda. En los casos pequeños apenas se nota, mientras que en los casos más grandes es casi imposible ejecutar los primeros algoritmos.
+Cuanto más grande es el caso, más se nota la mejora de la poda. En los casos pequeños apenas se nota, mientras que en los casos más grandes es casi imposible ejecutar los primeros algoritmos.\\
 
 Código cronómetro: \href{run:Tiempos/tiempos.cpp}{tiempos.cpp}
 
@@ -239,42 +263,56 @@ Texto de entrada: \href{run:Tiempos/entrada.txt}{salida.txt}
 
 Textos de salida: \href{run:Tiempos/salida.txt}{salida.txt}, \href{run:Tiempos/salida1.txt}{salida1.txt}, \href{run:Tiempos/salida2.txt}{salida2.txt}, \href{run:Tiempos/salida3.txt}{salida3.txt}, \href{run:Tiempos/salida4.txt}{salida4.txt}.
 
+\subsubsection*{Gráficas de tiempos}
+\addcontentsline{toc}{section}{Gráficas de tiempos}
 
 \begin{mygraph}
-\addplot table[x=i,y=a]{\mydata};
+\addplot table[x=Algoritmo,y=C. 1 1 1]{\mydata};
 \legend{Caso 1 1 1}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 1 1 1}
 
 \begin{mygraph}
-\addplot table[x=i,y=b]{\mydata};
+\addplot table[x=Algoritmo,y=C. 4 2 2]{\mydata};
 \legend{Caso 4 2 2}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 4 2 2}
 
 \begin{mygraph}
-\addplot table[x=i,y=c]{\mydata};
+\addplot table[x=Algoritmo,y=C. 20 4 5 (1)]{\mydata};
 \legend{Caso 20 4 5 (1)}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 20 4 5 (1)}
 
 \begin{mygraph}
-\addplot table[x=i,y=c]{\mydat};
+\addplot table[x=Algoritmo,y=C. 20 4 5 (1)]{\mydat};
 \legend{Solo poda}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 20 4 5 (1) - solo poda}
 
 \begin{mygraph}
-\addplot table[x=i,y=d]{\mydata};
+\addplot table[x=Algoritmo,y=C. 20 4 5 (2)]{\mydata};
 \legend{Caso 20 4 5 (2)}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 20 4 5 (2)}
 
 \begin{mygraph}
-\addplot table[x=i,y=d]{\mydat};
+\addplot table[x=Algoritmo,y=C. 20 4 5 (2)]{\mydat};
 \legend{Solo poda}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 20 4 5 (2) - solo poda}
 
 \begin{mygraph}
-\addplot table[x=i,y=e]{\mydata};
+\addplot table[x=Algoritmo,y=C. 4 4 5]{\mydata};
 \legend{Caso 4 4 5}
-\end{mygraph}
+\end{mygraph}\addcontentsline{toc}{subsection}{Gráfica de Caso 4 4 5}
+
+\subsubsection*{Tabla de tiempos}	
+\addcontentsline{toc}{section}{Tabla de tiempos}
 	
-	
+	\begin{center}
+		\pgfplotstabletypeset[ % local config, applies only for this table
+	1000 sep={},
+	columns/info/.style={
+		fixed,fixed zerofill,precision=1,showpos,
+		column type=r,
+	}
+	]
+	{\mydata}
+	\end{center}
 	    
 \end{document}
